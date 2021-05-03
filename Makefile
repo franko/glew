@@ -156,6 +156,11 @@ glew.pc: glew.pc.in
 
 BIN.LIBS = -Llib $(LDFLAGS.DYNAMIC) -l$(NAME) $(LDFLAGS.EXTRA) $(LDFLAGS.GL)
 
+# Fix added from https://github.com/nigels-com/glew/issues/96
+ifeq ($(filter-out mingw% cygwin,$(SYSTEM)),)
+BIN.LIBS := $(BIN.LIBS:-nostdlib=)
+endif
+
 GLEWINFO.BIN       := glewinfo$(BIN.SUFFIX)
 GLEWINFO.BIN.SRC   := src/glewinfo.c
 GLEWINFO.BIN.OBJ   := $(addprefix tmp/$(SYSTEM)/default/shared/,$(notdir $(GLEWINFO.BIN.SRC)))
