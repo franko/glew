@@ -208,7 +208,9 @@ install.all: install install.bin
 
 install:     install.include install.lib install.pkgconfig
 
-install.lib: glew.lib
+install.lib: install.lib.shared install.lib.static
+
+install.lib.shared: glew.lib.shared
 	$(INSTALL) -d -m 0755 "$(DESTDIR)$(LIBDIR)"
 # runtime
 ifeq ($(filter-out mingw% cygwin,$(SYSTEM)),)
@@ -228,6 +230,10 @@ endif
 ifneq ($(LN),)
 	$(LN) $(LIB.SHARED) "$(DESTDIR)$(LIBDIR)/$(LIB.DEVLNK)"
 endif
+	$(INSTALL) -m 0644 lib/$(LIB.STATIC) "$(DESTDIR)$(LIBDIR)/"
+
+install.lib.static: glew.lib.static
+	$(INSTALL) -d -m 0755 "$(DESTDIR)$(LIBDIR)"
 	$(INSTALL) -m 0644 lib/$(LIB.STATIC) "$(DESTDIR)$(LIBDIR)/"
 
 install.bin: glew.bin
