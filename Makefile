@@ -47,6 +47,17 @@ LIBDIR    ?= $(GLEW_DEST)/lib
 INCDIR    ?= $(GLEW_DEST)/include/GL
 PKGDIR    ?= $(GLEW_DEST)/lib/pkgconfig
 
+# Normally glew builds both shared and dynamic libraries and define no CFLAGS.
+# If a project want to use the static library it had to define itself GLEW_STATIC
+# to link correctly. We provide the option below for the case when glew is build
+# either as a shared or a static (but not both) and we want to be transparent to
+# the user.
+ifeq ($(GLEW_STATIC_ONLY),true)
+	GLEW_CFLAGS="-DGLEW_STATIC"
+else
+	GLEW_CFLAGS=""
+endif
+
 ifneq ($(GLEW_NO_GLU), -DGLEW_NO_GLU)
 LIBGLU = glu
 endif
@@ -147,7 +158,7 @@ glew.pc: glew.pc.in
 		-e "s|@exec_prefix@|$(BINDIR)|g" \
 		-e "s|@includedir@|$(INCDIR)|g" \
 		-e "s|@version@|$(GLEW_VERSION)|g" \
-		-e "s|@cflags@||g" \
+		-e "s|@cflags@|$(GLEW_CFLAGS)|g" \
 		-e "s|@libname@|$(NAME)|g" \
 		-e "s|@requireslib@|$(LIBGLU)|g" \
 		< $< > $@
